@@ -1,4 +1,4 @@
--- WOKINGLOG PvP MENU FINAL V2 - GIAO DIỆN MÀU MÈ + HIỆU ỨNG MỞ + HITBOX TO
+-- WOKINGLOG PvP MENU FINAL V2 - GIAO DIỆN MÀU MÈ + HIỆU ỨNG MỞ + HITBOX TO (ĐÃ FIX)
 local Players = game:GetService("Players")
 local lp = Players.LocalPlayer
 local rs = game:GetService("RunService")
@@ -223,21 +223,29 @@ createToggle("Kill Aura", function(on)
 	end
 end)
 
--- Hitbox To
+-- Hitbox To (đã fix lỗi mất đầu)
 createToggle("Hitbox To", function(on)
 	_G._hitboxOn = on
 	for _, p in pairs(Players:GetPlayers()) do
 		if p ~= lp and p.Character and p.Character:FindFirstChild("Head") then
 			local head = p.Character.Head
 			if on then
-				head.Size = Vector3.new(10, 10, 10)
-				head.Transparency = 0.7
-				head.Material = Enum.Material.ForceField
-				head.BrickColor = BrickColor.new("Pastel yellow")
+				pcall(function()
+					head.Size = Vector3.new(10, 10, 10)
+					head.Transparency = 0.7
+					head.Material = Enum.Material.ForceField
+					head.BrickColor = BrickColor.new("Pastel yellow")
+					head.CanCollide = false
+					local mesh = head:FindFirstChildOfClass("SpecialMesh")
+					if mesh then mesh:Destroy() end
+				end)
 			else
-				head.Size = Vector3.new(2, 1, 1)
-				head.Transparency = 0
-				head.Material = Enum.Material.Plastic
+				pcall(function()
+					head.Size = Vector3.new(2, 1, 1)
+					head.Transparency = 0
+					head.Material = Enum.Material.Plastic
+					head.CanCollide = true
+				end)
 			end
 		end
 	end
@@ -248,13 +256,18 @@ Players.PlayerAdded:Connect(function(p)
 		if _G._hitboxOn then
 			local head = char:WaitForChild("Head", 5)
 			if head then
-				head.Size = Vector3.new(10, 10, 10)
-				head.Transparency = 0.7
-				head.Material = Enum.Material.ForceField
-				head.BrickColor = BrickColor.new("Pastel yellow")
+				pcall(function()
+					head.Size = Vector3.new(10, 10, 10)
+					head.Transparency = 0.7
+					head.Material = Enum.Material.ForceField
+					head.BrickColor = BrickColor.new("Pastel yellow")
+					head.CanCollide = false
+					local mesh = head:FindFirstChildOfClass("SpecialMesh")
+					if mesh then mesh:Destroy() end
+				end)
 			end
 		end
 	end)
 end)
 
-print("\226\156\133 WOKINGLOG MENU FINAL V2 HOÀN THÀNH - GIAO DIỆN ĐẾP + HITBOX TO")
+print("✅ WOKINGLOG MENU FINAL V2 - GIAO DIỆN MÀU MÈ + HITBOX TO ĐÃ FIX")
