@@ -117,7 +117,7 @@ local function getNearestBoss(radius)
 end
 
 -- Quay quanh boss
-local speed = 70
+local speed = 50
 local radius = 22
 
 RunService.RenderStepped:Connect(function()
