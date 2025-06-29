@@ -1,3 +1,4 @@
+-- WOKINGLOG 👹 - Safe Mode Script
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Workspace = game:GetService("Workspace")
@@ -166,24 +167,24 @@ createToggle("aim", function(state)
     end
 end)
 
--- ✅ SPIN AN TOÀN BẰNG TWEENSERVICE
+-- ✅ SPIN AN TOÀN – QUAY DƯỚI ĐẤT
 createToggle("spin", function(state)
     if state then
         spawn(function()
             local angle = 0
-            local radius = 23
+            local radius = 22
+            local speed = 80
+            local humanoid = LocalPlayer.Character:WaitForChild("Humanoid")
             while toggles.spin do
                 if targetBoss and targetBoss:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    angle = angle + math.rad(30 + math.random(-5,5))
+                    angle = angle + math.rad(speed + math.random(-5,5))
                     local x = math.cos(angle) * radius
                     local z = math.sin(angle) * radius
-                    local targetPos = targetBoss.HumanoidRootPart.Position + Vector3.new(x, 3, z)
-                    local root = LocalPlayer.Character.HumanoidRootPart
-                    local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Linear)
-                    local goal = {CFrame = CFrame.new(targetPos, targetBoss.HumanoidRootPart.Position)}
-                    TweenService:Create(root, tweenInfo, goal):Play()
+                    local y = targetBoss.HumanoidRootPart.Position.Y
+                    local targetPos = Vector3.new(targetBoss.HumanoidRootPart.Position.X + x, y, targetBoss.HumanoidRootPart.Position.Z + z)
+                    humanoid:MoveTo(targetPos)
                 end
-                wait(0.2 + math.random() * 0.05)
+                wait(0.03)
             end
         end)
     end
