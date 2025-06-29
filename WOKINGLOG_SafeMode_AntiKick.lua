@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
 
 -- GUI Setup
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
@@ -104,7 +105,7 @@ function pickupItemsAround(pos, radius)
                 local p = v.Position or (v:IsA("Model") and v:GetModelCFrame().p)
                 if p and (p - pos).Magnitude <= radius then
                     firetouchinterest(LocalPlayer.Character.HumanoidRootPart, v, 0)
-                    wait(0.5)
+                    wait(0.4)
                     firetouchinterest(LocalPlayer.Character.HumanoidRootPart, v, 1)
                 end
             end
@@ -165,22 +166,24 @@ createToggle("aim", function(state)
     end
 end)
 
--- ✅ SPIN QUAY MƯỢT - BÁN KÍNH 23 - TỐC ĐỘ 50
+-- ✅ SPIN AN TOÀN BẰNG TWEENSERVICE
 createToggle("spin", function(state)
     if state then
         spawn(function()
             local angle = 0
-            local speed = 50
             local radius = 23
             while toggles.spin do
-                if targetBoss and targetBoss:FindFirstChild("HumanoidRootPart") then
-                    angle = angle + math.rad(speed)
+                if targetBoss and targetBoss:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    angle = angle + math.rad(30 + math.random(-5,5))
                     local x = math.cos(angle) * radius
                     local z = math.sin(angle) * radius
-                    local pos = targetBoss.HumanoidRootPart.Position + Vector3.new(x, 3, z)
-                    LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(pos, targetBoss.HumanoidRootPart.Position)
+                    local targetPos = targetBoss.HumanoidRootPart.Position + Vector3.new(x, 3, z)
+                    local root = LocalPlayer.Character.HumanoidRootPart
+                    local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Linear)
+                    local goal = {CFrame = CFrame.new(targetPos, targetBoss.HumanoidRootPart.Position)}
+                    TweenService:Create(root, tweenInfo, goal):Play()
                 end
-                wait(0.03)
+                wait(0.2 + math.random() * 0.05)
             end
         end)
     end
