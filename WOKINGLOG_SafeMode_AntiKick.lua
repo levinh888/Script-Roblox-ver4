@@ -1,17 +1,3 @@
--- WOKINGLOG 👹 - SafeMode Anti-Kick Version
-
--- Anti-Kick Hook
-local mt = getrawmetatable(game)
-setreadonly(mt, false)
-local oldNamecall = mt.__namecall
-mt.__namecall = newcclosure(function(self, ...)
-    local args = {...}
-    if getnamecallmethod() == "Kick" then
-        return nil
-    end
-    return oldNamecall(self, unpack(args))
-end)
-
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Workspace = game:GetService("Workspace")
@@ -179,20 +165,22 @@ createToggle("aim", function(state)
     end
 end)
 
+-- ✅ SPIN QUAY MƯỢT - BÁN KÍNH 23 - TỐC ĐỘ 50
 createToggle("spin", function(state)
     if state then
         spawn(function()
             local angle = 0
+            local speed = 50
+            local radius = 23
             while toggles.spin do
                 if targetBoss and targetBoss:FindFirstChild("HumanoidRootPart") then
-                    local radius = 23
-                    angle = angle + math.rad(20)
+                    angle = angle + math.rad(speed)
                     local x = math.cos(angle) * radius
                     local z = math.sin(angle) * radius
-                    local newPos = targetBoss.HumanoidRootPart.Position + Vector3.new(x, 3, z)
-                    LocalPlayer.Character:WaitForChild("Humanoid"):MoveTo(newPos)
+                    local pos = targetBoss.HumanoidRootPart.Position + Vector3.new(x, 3, z)
+                    LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(pos, targetBoss.HumanoidRootPart.Position)
                 end
-                wait(0.6)
+                wait(0.03)
             end
         end)
     end
