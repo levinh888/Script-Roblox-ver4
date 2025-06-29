@@ -1,209 +1,218 @@
--- WOKINGLOG 👹 - Safe Mode Script
+-- // Cấu hình cơ bản
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
-local Workspace = game:GetService("Workspace")
-local TweenService = game:GetService("TweenService")
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
 
--- GUI Setup
+LocalPlayer.CharacterAdded:Connect(function(char)
+	Character = char
+	HumanoidRootPart = char:WaitForChild("HumanoidRootPart")
+end)
+
+-- // Tạo GUI
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-ScreenGui.Name = "WOKINGLOG_SAFE"
+ScreenGui.Name = "AutoCombatUI"
 
--- Icon 👹 Button
-local IconButton = Instance.new("TextButton", ScreenGui)
-IconButton.Size = UDim2.new(0, 50, 0, 50)
-IconButton.Position = UDim2.new(0, 20, 1, -70)
-IconButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-IconButton.Text = "👹"
-IconButton.TextScaled = true
-IconButton.Font = Enum.Font.GothamBlack
-IconButton.TextColor3 = Color3.fromRGB(255, 0, 85)
-Instance.new("UICorner", IconButton).CornerRadius = UDim.new(0, 12)
+-- // Nút mở
+local OpenBtn = Instance.new("TextButton", ScreenGui)
+OpenBtn.Size = UDim2.new(0, 100, 0, 30)
+OpenBtn.Position = UDim2.new(0, 20, 0.5, -100)
+OpenBtn.Text = "🛠 Mở MENU"
+OpenBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 120)
+OpenBtn.TextColor3 = Color3.new(1, 1, 1)
+OpenBtn.Font = Enum.Font.Gotham
+OpenBtn.TextSize = 14
 
--- Main GUI Frame
+-- // Khung menu
 local Frame = Instance.new("Frame", ScreenGui)
-Frame.Size = UDim2.new(0, 240, 0, 300)
-Frame.Position = UDim2.new(0.5, -120, 0.5, -150)
-Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Frame.BackgroundTransparency = 0.3
+Frame.Position = UDim2.new(0.7, 0, 0.4, 0)
+Frame.Size = UDim2.new(0, 220, 0, 240)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+Frame.BorderSizePixel = 0
+Frame.BackgroundTransparency = 0.1
 Frame.Visible = false
 Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 12)
 
 local title = Instance.new("TextLabel", Frame)
-title.Size = UDim2.new(1, 0, 0, 40)
+title.Text = "✨ MENU AUTO ✨"
+title.Size = UDim2.new(1, 0, 0, 30)
 title.BackgroundTransparency = 1
-title.Text = "👹 WOKINGLOG 👹"
+title.TextColor3 = Color3.fromRGB(255, 255, 0)
 title.Font = Enum.Font.GothamBlack
-title.TextColor3 = Color3.fromRGB(255, 0, 85)
-title.TextStrokeTransparency = 0.5
-title.TextScaled = true
+title.TextSize = 20
+
+-- Các nút
+local ToggleAutoAttack = Instance.new("TextButton", Frame)
+ToggleAutoAttack.Text = "Tự đánh khi cầm vũ khí"
+ToggleAutoAttack.Size = UDim2.new(1, -20, 0, 30)
+ToggleAutoAttack.Position = UDim2.new(0, 10, 0, 40)
+ToggleAutoAttack.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+ToggleAutoAttack.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleAutoAttack.Font = Enum.Font.Gotham
+ToggleAutoAttack.TextSize = 14
+
+local ToggleBossAttack = Instance.new("TextButton", Frame)
+ToggleBossAttack.Text = "Quay quanh Human Boss"
+ToggleBossAttack.Size = UDim2.new(1, -20, 0, 30)
+ToggleBossAttack.Position = UDim2.new(0, 10, 0, 80)
+ToggleBossAttack.BackgroundColor3 = Color3.fromRGB(70, 50, 80)
+ToggleBossAttack.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBossAttack.Font = Enum.Font.Gotham
+ToggleBossAttack.TextSize = 14
+
+local ToggleShowHP = Instance.new("TextButton", Frame)
+ToggleShowHP.Text = "Hiển thị máu Human"
+ToggleShowHP.Size = UDim2.new(1, -20, 0, 30)
+ToggleShowHP.Position = UDim2.new(0, 10, 0, 120)
+ToggleShowHP.BackgroundColor3 = Color3.fromRGB(90, 70, 80)
+ToggleShowHP.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleShowHP.Font = Enum.Font.Gotham
+ToggleShowHP.TextSize = 14
+
+local AutoTPButton = Instance.new("TextButton", Frame)
+AutoTPButton.Text = "Dịch chuyển tới Human gần"
+AutoTPButton.Size = UDim2.new(1, -20, 0, 30)
+AutoTPButton.Position = UDim2.new(0, 10, 0, 160)
+AutoTPButton.BackgroundColor3 = Color3.fromRGB(100, 60, 80)
+AutoTPButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoTPButton.Font = Enum.Font.Gotham
+AutoTPButton.TextSize = 14
 
 local CloseBtn = Instance.new("TextButton", Frame)
+CloseBtn.Text = "X"
 CloseBtn.Size = UDim2.new(0, 30, 0, 30)
-CloseBtn.Position = UDim2.new(1, -35, 0, 5)
-CloseBtn.Text = "✖"
+CloseBtn.Position = UDim2.new(1, -35, 0, 0)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseBtn.Font = Enum.Font.GothamBold
-CloseBtn.TextScaled = true
-CloseBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 85)
-CloseBtn.TextColor3 = Color3.new(1, 1, 1)
-Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
+CloseBtn.TextSize = 16
 
-local Container = Instance.new("Frame", Frame)
-Container.Size = UDim2.new(1, -20, 1, -60)
-Container.Position = UDim2.new(0, 10, 0, 50)
-Container.BackgroundTransparency = 1
+-- Hiển thị máu góc
+local HumanHealthLabel = Instance.new("TextLabel", ScreenGui)
+HumanHealthLabel.Size = UDim2.new(0, 200, 0, 30)
+HumanHealthLabel.Position = UDim2.new(0, 10, 0, 10)
+HumanHealthLabel.BackgroundTransparency = 0.3
+HumanHealthLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+HumanHealthLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+HumanHealthLabel.Font = Enum.Font.GothamBold
+HumanHealthLabel.TextSize = 14
+HumanHealthLabel.Visible = false
 
-local UIListLayout = Instance.new("UIListLayout", Container)
-UIListLayout.Padding = UDim.new(0, 6)
+-- // Biến điều khiển
+local rotating = false
+local attacking = false
+local showHP = false
+local autoTP = false
+local bossTarget = nil
+local humanTarget = nil
 
-local toggles = { teleport=false, autoAttack=false, aim=false, spin=false }
-local targetBoss = nil
-
-function createToggle(name, callback)
-    local btn = Instance.new("TextButton", Container)
-    btn.Size = UDim2.new(1, 0, 0, 32)
-    btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.Font = Enum.Font.Gotham
-    btn.TextScaled = true
-    btn.Text = "[OFF] " .. name
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
-    local stroke = Instance.new("UIStroke", btn)
-    stroke.Color = Color3.fromRGB(255, 0, 85)
-    stroke.Thickness = 1.5
-    stroke.Transparency = 0.3
-    btn.MouseButton1Click:Connect(function()
-        toggles[name] = not toggles[name]
-        btn.Text = (toggles[name] and "[ON] " or "[OFF] ") .. name
-        callback(toggles[name])
-    end)
+-- // Tìm Human gần
+local function getNearestBoss(radius)
+	local closest, distance = nil, radius
+	for _, obj in pairs(workspace:GetDescendants()) do
+		if obj:IsA("Model") and obj:FindFirstChild("Humanoid") and obj:FindFirstChild("HumanoidRootPart") and obj ~= Character then
+			local dist = (HumanoidRootPart.Position - obj.HumanoidRootPart.Position).Magnitude
+			if dist < distance then
+				closest = obj
+				distance = dist
+			end
+		end
+	end
+	return closest
 end
 
-function findBoss()
-    for _, model in pairs(Workspace:GetDescendants()) do
-        if model:IsA("Model") and model:FindFirstChild("Humanoid") and model:FindFirstChild("HumanoidRootPart") and model ~= LocalPlayer.Character then
-            if model.Humanoid.Health > 0 then
-                return model
-            end
-        end
-    end
-    return nil
-end
+-- // Quay quanh boss
+local speed = 70
+local radius = 23
 
-local healthLabel = Instance.new("TextLabel", ScreenGui)
-healthLabel.Size = UDim2.new(0, 200, 0, 30)
-healthLabel.Position = UDim2.new(0.5, -100, 0, 20)
-healthLabel.BackgroundTransparency = 1
-healthLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
-healthLabel.TextStrokeTransparency = 0.5
-healthLabel.Font = Enum.Font.GothamBold
-healthLabel.TextScaled = true
-healthLabel.Text = "Máu Boss: Chưa phát hiện"
+RunService.RenderStepped:Connect(function()
+	if rotating and bossTarget and bossTarget:FindFirstChild("HumanoidRootPart") then
+		local npcPos = bossTarget.HumanoidRootPart.Position
+		local time = tick() * speed
+		local x = math.cos(time) * radius
+		local z = math.sin(time) * radius
+		local targetPos = npcPos + Vector3.new(x, 0, z)
+		HumanoidRootPart.CFrame = CFrame.new(targetPos, npcPos)
+	end
 
-function pickupItemsAround(pos, radius)
-    for _, v in pairs(Workspace:GetDescendants()) do
-        if (v:IsA("Tool") or v:IsA("Part") or v:IsA("Model")) and v:IsDescendantOf(Workspace) then
-            if v:FindFirstChild("TouchInterest") or v:IsA("Tool") then
-                local p = v.Position or (v:IsA("Model") and v:GetModelCFrame().p)
-                if p and (p - pos).Magnitude <= radius then
-                    firetouchinterest(LocalPlayer.Character.HumanoidRootPart, v, 0)
-                    wait(0.4)
-                    firetouchinterest(LocalPlayer.Character.HumanoidRootPart, v, 1)
-                end
-            end
-        end
-    end
-end
+	if autoTP then
+		humanTarget = getNearestBoss(100)
+		if humanTarget and humanTarget:FindFirstChild("HumanoidRootPart") then
+			HumanoidRootPart.CFrame = humanTarget.HumanoidRootPart.CFrame * CFrame.new(0, 0, -5)
+		end
+	end
 
-spawn(function()
-    while wait(1.5) do
-        if targetBoss and targetBoss:FindFirstChild("Humanoid") then
-            if targetBoss.Humanoid.Health <= 0 then
-                wait(2)
-                pickupItemsAround(targetBoss.HumanoidRootPart.Position, 15)
-                targetBoss = nil
-            end
-        end
-    end
+	if showHP then
+		humanTarget = getNearestBoss(100)
+		if humanTarget and humanTarget:FindFirstChild("Humanoid") then
+			local hp = humanTarget.Humanoid.Health
+			local maxHp = humanTarget.Humanoid.MaxHealth
+			HumanHealthLabel.Text = string.format("💓 Human HP: %d / %d", hp, maxHp)
+			HumanHealthLabel.Visible = true
+		else
+			HumanHealthLabel.Text = "Không thấy Human"
+		end
+	else
+		HumanHealthLabel.Visible = false
+	end
 end)
 
-createToggle("teleport", function(state)
-    if state then
-        spawn(function()
-            while toggles.teleport do
-                local boss = findBoss()
-                if boss then
-                    targetBoss = boss
-                    LocalPlayer.Character:WaitForChild("Humanoid"):MoveTo(boss.HumanoidRootPart.Position + Vector3.new(0, 3, 0))
-                end
-                wait(math.random(2, 3))
-            end
-        end)
-    end
+-- // Auto attack tool
+coroutine.wrap(function()
+	while true do
+		wait(0.2)
+		if attacking then
+			local tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Tool")
+			if tool then
+				pcall(function()
+					tool:Activate()
+				end)
+			end
+		end
+	end
+end)()
+
+-- // Bật quay quanh boss
+ToggleBossAttack.MouseButton1Click:Connect(function()
+	rotating = not rotating
+	if rotating then
+		bossTarget = getNearestBoss(100)
+		if bossTarget then
+			ToggleBossAttack.Text = "Đang quay quanh Boss..."
+		else
+			ToggleBossAttack.Text = "Không tìm thấy Boss"
+			rotating = false
+		end
+	else
+		ToggleBossAttack.Text = "Quay quanh Human Boss"
+		bossTarget = nil
+	end
 end)
 
-createToggle("autoAttack", function(state)
-    if state then
-        spawn(function()
-            while toggles.autoAttack do
-                local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
-                if tool then tool:Activate() end
-                wait(0.6)
-            end
-        end)
-    end
+-- // Bật tự đánh
+ToggleAutoAttack.MouseButton1Click:Connect(function()
+	attacking = not attacking
+	ToggleAutoAttack.Text = attacking and "Đang tự đánh..." or "Tự đánh khi cầm vũ khí"
 end)
 
-createToggle("aim", function(state)
-    if state then
-        spawn(function()
-            while toggles.aim do
-                if targetBoss and targetBoss:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local cf = CFrame.new(LocalPlayer.Character.HumanoidRootPart.Position, targetBoss.HumanoidRootPart.Position)
-                    LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(LocalPlayer.Character.HumanoidRootPart.Position) * CFrame.Angles(0, cf.LookVector:Angle(Vector3.new(0, 0, -1)), 0)
-                end
-                wait(0.5)
-            end
-        end)
-    end
+-- // Bật hiển thị máu
+ToggleShowHP.MouseButton1Click:Connect(function()
+	showHP = not showHP
+	ToggleShowHP.Text = showHP and "Đang hiển thị máu Human" or "Hiển thị máu Human"
 end)
 
--- ✅ SPIN AN TOÀN – QUAY DƯỚI ĐẤT
-createToggle("spin", function(state)
-    if state then
-        spawn(function()
-            local angle = 0
-            local radius = 22
-            local speed = 80
-            local humanoid = LocalPlayer.Character:WaitForChild("Humanoid")
-            while toggles.spin do
-                if targetBoss and targetBoss:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    angle = angle + math.rad(speed + math.random(-5,5))
-                    local x = math.cos(angle) * radius
-                    local z = math.sin(angle) * radius
-                    local y = targetBoss.HumanoidRootPart.Position.Y
-                    local targetPos = Vector3.new(targetBoss.HumanoidRootPart.Position.X + x, y, targetBoss.HumanoidRootPart.Position.Z + z)
-                    humanoid:MoveTo(targetPos)
-                end
-                wait(0.03)
-            end
-        end)
-    end
+-- // Dịch chuyển tới Human
+AutoTPButton.MouseButton1Click:Connect(function()
+	autoTP = not autoTP
+	AutoTPButton.Text = autoTP and "Đang dịch chuyển..." or "Dịch chuyển tới Human gần"
 end)
 
-spawn(function()
-    while wait(0.5) do
-        if targetBoss and targetBoss:FindFirstChild("Humanoid") then
-            healthLabel.Text = "Máu Boss: " .. math.floor(targetBoss.Humanoid.Health)
-        else
-            healthLabel.Text = "Máu Boss: Không phát hiện"
-        end
-    end
-end)
-
-IconButton.MouseButton1Click:Connect(function()
-    Frame.Visible = true
-end)
-
+-- // Đóng/mở menu
 CloseBtn.MouseButton1Click:Connect(function()
-    Frame.Visible = false
+	Frame.Visible = false
+end)
+
+OpenBtn.MouseButton1Click:Connect(function()
+	Frame.Visible = not Frame.Visible
 end)
