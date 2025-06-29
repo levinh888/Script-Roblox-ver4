@@ -3,9 +3,11 @@ local LocalPlayer = Players.LocalPlayer
 local Workspace = game:GetService("Workspace")
 local TweenService = game:GetService("TweenService")
 
+-- GUI Setup
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 ScreenGui.Name = "WOKINGLOG_SAFE"
 
+-- Icon 👹 Button
 local IconButton = Instance.new("TextButton", ScreenGui)
 IconButton.Size = UDim2.new(0, 50, 0, 50)
 IconButton.Position = UDim2.new(0, 20, 1, -70)
@@ -16,6 +18,7 @@ IconButton.Font = Enum.Font.GothamBlack
 IconButton.TextColor3 = Color3.fromRGB(255, 0, 85)
 Instance.new("UICorner", IconButton).CornerRadius = UDim.new(0, 12)
 
+-- Main GUI Frame
 local Frame = Instance.new("Frame", ScreenGui)
 Frame.Size = UDim2.new(0, 240, 0, 300)
 Frame.Position = UDim2.new(0.5, -120, 0.5, -150)
@@ -163,7 +166,7 @@ createToggle("aim", function(state)
     end
 end)
 
--- 🔥 SPIN AN TOÀN - TỐC ĐỘ NHANH
+-- ✅ SPIN AN TOÀN BẰNG TWEENSERVICE
 createToggle("spin", function(state)
     if state then
         spawn(function()
@@ -171,16 +174,16 @@ createToggle("spin", function(state)
             local radius = 23
             while toggles.spin do
                 if targetBoss and targetBoss:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    angle = angle + math.rad(60 + math.random(-5,5)) -- tăng góc quay
+                    angle = angle + math.rad(30 + math.random(-5,5))
                     local x = math.cos(angle) * radius
                     local z = math.sin(angle) * radius
                     local targetPos = targetBoss.HumanoidRootPart.Position + Vector3.new(x, 3, z)
                     local root = LocalPlayer.Character.HumanoidRootPart
-                    local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear) -- quay nhanh hơn
+                    local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Linear)
                     local goal = {CFrame = CFrame.new(targetPos, targetBoss.HumanoidRootPart.Position)}
                     TweenService:Create(root, tweenInfo, goal):Play()
                 end
-                wait(0.1 + math.random() * 0.03)
+                wait(0.2 + math.random() * 0.05)
             end
         end)
     end
