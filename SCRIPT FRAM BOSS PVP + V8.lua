@@ -1,75 +1,131 @@
---// 👹 WOKINGLOG 👹 Menu – Tự động đánh | Quay quanh NPC2 | Hiển thị máu | GUI Xanh
-local a=game:GetService("Players")local b=game:GetService("RunService")local c=a.LocalPlayer
-local d=game:GetService("VirtualInputManager")local e=false local f=false local g="NPC2"
-local h=Instance.new("ScreenGui")local i=Instance.new("Frame")local j=Instance.new("TextButton")
-local k=Instance.new("TextLabel")local l=Instance.new("TextButton")local m=Instance.new("TextLabel")
+--// 👹 Script by Vinh | Bản quyền: WOKINGLOG 👹
 
-h.Name="👹 WOKINGLOG 👹"h.Parent=game.CoreGui
-i.Size=UDim2.new(0,250,0,180)i.Position=UDim2.new(0,20,0.5,-90)
-i.BackgroundColor3=Color3.fromRGB(0, 170, 255)i.BackgroundTransparency=0.1
-i.BorderSizePixel=0 i.Active=true i.Draggable=true i.Parent=h
+-- SERVICES
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local LocalPlayer = Players.LocalPlayer
 
-k.Text="👹 MENU WOKINGLOG 👹"k.Size=UDim2.new(1,0,0,30)
-k.BackgroundColor3=Color3.fromRGB(0,130,220)k.TextColor3=Color3.new(1,1,1)
-k.Font=Enum.Font.GothamBold k.TextScaled=true k.Parent=i
+-- SETTINGS
+local BossName = "NPC2"
+local Radius = 21.30
+local Speed = 2.90
 
-j.Text="▶️ Quay quanh NPC"j.Size=UDim2.new(0.9,0,0,40)j.Position=UDim2.new(0.05,0,0.25,0)
-j.BackgroundColor3=Color3.fromRGB(0,100,200)j.TextColor3=Color3.new(1,1,1)
-j.Font=Enum.Font.GothamBold j.TextScaled=true j.Parent=i
+-- UI
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.Name = "WOKINGLOG_GUI"
 
-l.Text="⚔️ Tự đánh + Hiển thị máu"l.Size=UDim2.new(0.9,0,0,40)l.Position=UDim2.new(0.05,0,0.55,0)
-l.BackgroundColor3=Color3.fromRGB(0,100,200)l.TextColor3=Color3.new(1,1,1)
-l.Font=Enum.Font.GothamBold l.TextScaled=true l.Parent=i
+local openBtn = Instance.new("TextButton", gui)
+openBtn.Text = "👹"
+openBtn.Size = UDim2.new(0, 40, 0, 40)
+openBtn.Position = UDim2.new(0, 10, 0, 200)
+openBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+openBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+openBtn.Font = Enum.Font.FredokaOne
+openBtn.TextScaled = true
+openBtn.ZIndex = 10
 
-m.Text="👹 WOKINGLOG 👹"m.Size=UDim2.new(1,0,0,30)m.Position=UDim2.new(0,0,1,-30)
-m.BackgroundColor3=Color3.fromRGB(0,150,250)m.TextColor3=Color3.new(1,1,1)
-m.Font=Enum.Font.GothamBold m.TextScaled=true m.Parent=i
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 300, 0, 220)
+frame.Position = UDim2.new(0.5, -150, 0.5, -110)
+frame.BackgroundColor3 = Color3.fromRGB(42, 163, 108)
+frame.Visible = false
+frame.Draggable = true
+frame.Active = true
 
---// Quay quanh bằng CFrame
-b.RenderStepped:Connect(function()
-	if e then
-		local n=c.Character if n and n:FindFirstChild("HumanoidRootPart")then
-			local o=workspace:FindFirstChild(g)
-			if o and o:FindFirstChild("HumanoidRootPart")then
-				local p=n.HumanoidRootPart
-				local q=(p.Position-o.HumanoidRootPart.Position).Magnitude
-				local r=Vector3.new(math.cos(tick())*q,0,math.sin(tick())*q)
-				p.CFrame=CFrame.new(o.HumanoidRootPart.Position+r,o.HumanoidRootPart.Position)
+local title = Instance.new("TextLabel", frame)
+title.Text = "👹 WOKINGLOG MENU 👹"
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundColor3 = Color3.fromRGB(0, 80, 160)
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBlack
+title.TextScaled = true
+
+local btnRotate = Instance.new("TextButton", frame)
+btnRotate.Text = "Quay Quanh NPC2"
+btnRotate.Size = UDim2.new(1, -20, 0, 40)
+btnRotate.Position = UDim2.new(0, 10, 0, 60)
+btnRotate.BackgroundColor3 = Color3.fromRGB(0, 140, 90)
+btnRotate.TextColor3 = Color3.fromRGB(255, 255, 255)
+btnRotate.Font = Enum.Font.GothamBold
+btnRotate.TextScaled = true
+
+local btnAttack = Instance.new("TextButton", frame)
+btnAttack.Text = "Tự Đánh Khi Cầm Vũ Khí"
+btnAttack.Size = UDim2.new(1, -20, 0, 40)
+btnAttack.Position = UDim2.new(0, 10, 0, 110)
+btnAttack.BackgroundColor3 = Color3.fromRGB(0, 140, 90)
+btnAttack.TextColor3 = Color3.fromRGB(255, 255, 255)
+btnAttack.Font = Enum.Font.GothamBold
+btnAttack.TextScaled = true
+
+local hpLabel = Instance.new("TextLabel", frame)
+hpLabel.Text = "Máu Boss: Chưa xác định"
+hpLabel.Size = UDim2.new(1, -20, 0, 40)
+hpLabel.Position = UDim2.new(0, 10, 0, 160)
+hpLabel.BackgroundColor3 = Color3.fromRGB(20, 100, 50)
+hpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+hpLabel.Font = Enum.Font.Gotham
+hpLabel.TextScaled = true
+
+-- TOGGLES
+local rotating = false
+local autoAttack = false
+local angle = 0
+
+openBtn.MouseButton1Click:Connect(function()
+	frame.Visible = not frame.Visible
+end)
+
+btnRotate.MouseButton1Click:Connect(function()
+	rotating = not rotating
+	btnRotate.Text = rotating and "Đang quay quanh Boss" or "Quay Quanh NPC2"
+end)
+
+btnAttack.MouseButton1Click:Connect(function()
+	autoAttack = not autoAttack
+	btnAttack.Text = autoAttack and "Đang Tự Đánh" or "Tự Đánh Khi Cầm Vũ Khí"
+end)
+
+-- QUAY QUANH BOSS
+RunService.RenderStepped:Connect(function(dt)
+	if rotating then
+		local boss = workspace:FindFirstChild(BossName)
+		local char = LocalPlayer.Character
+		if boss and char and char:FindFirstChild("HumanoidRootPart") then
+			angle += dt * Speed
+			local x = math.cos(angle) * Radius
+			local z = math.sin(angle) * Radius
+			char:MoveTo(boss.Position + Vector3.new(x, 0, z))
+		end
+	end
+end)
+
+-- TỰ ĐÁNH
+task.spawn(function()
+	while true do
+		task.wait(0.3)
+		if autoAttack then
+			local tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
+			if tool then
+				VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)
+				VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
 			end
 		end
 	end
 end)
 
---// Tự đánh nếu có vũ khí + hiện máu
-b.RenderStepped:Connect(function()
-	if f then
-		local n=c.Character if n then
-			local s=n:FindFirstChildOfClass("Tool")
-			if s then
-				d:SendMouseButtonEvent(0,0,0,true,game,0)
-				wait()
-				d:SendMouseButtonEvent(0,0,0,false,game,0)
-			end
-			local o=workspace:FindFirstChild(g)
-			if o and o:FindFirstChild("Humanoid")then
-				local t=o.Humanoid
-				game.StarterGui:SetCore("ChatMakeSystemMessage",{
-					Text="👹 HP BOSS: "..math.floor(t.Health).."/"..math.floor(t.MaxHealth),
-					Color=Color3.fromRGB(255,50,50),
-					Font=Enum.Font.SourceSansBold,
-					FontSize=Enum.FontSize.Size24
-				})
-			end
+-- HIỂN THỊ MÁU BOSS
+task.spawn(function()
+	while true do
+		task.wait(0.5)
+		local boss = workspace:FindFirstChild(BossName)
+		if boss and boss:FindFirstChild("Humanoid") then
+			local hp = math.floor(boss.Humanoid.Health)
+			local maxHp = math.floor(boss.Humanoid.MaxHealth)
+			hpLabel.Text = "Máu Boss: " .. hp .. " / " .. maxHp
+		else
+			hpLabel.Text = "Máu Boss: Chưa xác định"
 		end
 	end
-end)
-
---// Bật nút
-j.MouseButton1Click:Connect(function()
-	e=not e
-	j.Text=e and "⏸️ Dừng quay"or"▶️ Quay quanh NPC"
-end)
-l.MouseButton1Click:Connect(function()
-	f=not f
-	l.Text=f and "⏸️ Dừng đánh/hiển thị máu"or"⚔️ Tự đánh + Hiển thị máu"
 end)
