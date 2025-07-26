@@ -1,4 +1,4 @@
---📌 Script đã được rối bởi GPT
+
 
 local HhiKzlEu = game:GetService("Players")
 local DbLHKDlo = game:GetService("RunService")
